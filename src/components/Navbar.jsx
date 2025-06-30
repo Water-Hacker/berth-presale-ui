@@ -4,7 +4,6 @@ import Logo from "../assets/logo.svg";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
-// Define launch date outside the component to avoid unnecessary re-renders
 const LAUNCH_DATE = new Date("2026-07-06T00:00:00Z");
 
 const Navbar = () => {
@@ -37,26 +36,28 @@ const Navbar = () => {
       }
     };
 
-    updateTime(); // Initial call
-    const interval = setInterval(updateTime, 1000); // Update every second
-
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []); // No dependencies needed since LAUNCH_DATE is outside component
+  }, []);
 
   return (
-    <header className="bg-black bg-opacity-80 shadow-2xl p-4 px-6 flex flex-col md:flex-row md:justify-between md:items-center backdrop-blur-md border-b border-red-600">
-      <div className="flex items-center gap-4 mb-2 md:mb-0">
+    <header className="bg-black bg-opacity-80 shadow-2xl px-4 py-3 md:px-6 md:py-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0 border-b border-red-600 backdrop-blur-md">
+      
+      {/* Logo & Title */}
+      <div className="flex items-center gap-3">
         <img
           src={Logo}
           alt="BERTH Logo"
-          className="h-10 w-auto drop-shadow-[0_0_5px_red]"
+          className="h-8 w-8 md:h-10 md:w-auto drop-shadow-[0_0_5px_red]"
         />
-        <h2 className="text-white font-bold text-xl drop-shadow-[0_0_8px_red]">
+        <h2 className="text-white font-bold text-lg md:text-xl drop-shadow-[0_0_8px_red]">
           BERTH
         </h2>
       </div>
 
-      <nav className="flex flex-wrap items-center gap-6 text-white font-semibold text-sm md:text-base">
+      {/* Navigation Links */}
+      <nav className="flex flex-wrap justify-center gap-3 md:gap-6 text-white text-xs md:text-sm font-semibold">
         <Link to="/" className="hover:text-red-500 transition">{t("Dashboard")}</Link>
         <Link to="/whitelist" className="hover:text-red-500 transition">{t("Tokenomics")}</Link>
         <Link to="/roadmap" className="hover:text-red-500 transition">{t("Roadmap")}</Link>
@@ -64,13 +65,16 @@ const Navbar = () => {
         <Link to="/privacy-policy" className="hover:text-red-500 transition">{t("Privacy")}</Link>
       </nav>
 
-      <div className="flex flex-col md:flex-row items-end md:items-center gap-3 mt-3 md:mt-0 text-xs font-mono text-gray-400 text-right">
-        <div className="flex flex-col md:items-end">
-          <span className="drop-shadow-sm">{t("Time")}: {currentTime}</span>
-          <span className="text-red-500 drop-shadow-sm">{t("Launch In")}: {countdown}</span>
-          <span className="text-yellow-400 drop-shadow-sm">⚠️ Token Price grows 5% Weekly. Presale ends once funding goal is reached.</span>
+      {/* Info & Language */}
+      <div className="text-right text-[10px] md:text-xs text-gray-400 font-mono leading-tight flex flex-col md:items-end">
+        <span className="drop-shadow-sm">{t("Time")}: {currentTime}</span>
+        <span className="text-red-500 drop-shadow-sm">{t("Launch In")}: {countdown}</span>
+        <span className="text-yellow-400 drop-shadow-sm max-w-[200px] md:max-w-none">
+          ⚠️ {t("+5% in price weekly. Presale ends once purchase goal is reached.")}
+        </span>
+        <div className="mt-1 md:mt-0">
+          <LanguageSwitcher />
         </div>
-        <LanguageSwitcher />
       </div>
     </header>
   );
