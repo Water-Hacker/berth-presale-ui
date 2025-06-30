@@ -1,0 +1,58 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+/* --- 🔥 LOGO ANIMATION --- */
+
+@keyframes glowPulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px red);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px crimson);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px red);
+    opacity: 1;
+  }
+}
+
+/* Automatically target any logo.svg image across the app */
+img[src*="logo.svg"],
+img[src*="Logo.svg"] {
+  animation: glowPulse 2.8s ease-in-out infinite;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 🚀 On hover, increase glow and slightly enlarge */
+img[src*="logo.svg"]:hover,
+img[src*="Logo.svg"]:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 18px red);
+  opacity: 1;
+}

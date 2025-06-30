@@ -1,0 +1,189 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients for Earth sphere -->
+    <radialGradient id="earthGradient" cx="0.3" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#4a9eff" stop-opacity="0.9"/>
+      <stop offset="30%" stop-color="#2a5dd0" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="#1a3b8a" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#0d1f45" stop-opacity="0.9"/>
+    </radialGradient>
+    
+    <!-- NVIDIA Green gradient -->
+    <radialGradient id="nvidiaGreen" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" stop-color="#76ff03" stop-opacity="1"/>
+      <stop offset="50%" stop-color="#4caf50" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#2e7d32" stop-opacity="0.8"/>
+    </radialGradient>
+    
+    <!-- Mercury white gradient for BERTH text -->
+    <linearGradient id="mercuryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#e8f4f8" stop-opacity="0.95"/>
+      <stop offset="70%" stop-color="#b8d4e3" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#90c2d9" stop-opacity="0.85"/>
+    </linearGradient>
+    
+    <!-- Circuit line gradient -->
+    <linearGradient id="circuitGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ffff" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#76ff03" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ff6ec7" stop-opacity="0.7"/>
+    </linearGradient>
+    
+    <!-- Glow effects -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- 3D shadow for text -->
+    <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.6"/>
+      <feGaussianBlur stdDeviation="2" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Particle animation -->
+    <animateTransform id="rotate" attributeName="transform" type="rotate" 
+                      values="0 400 300;360 400 300" dur="20s" repeatCount="indefinite"/>
+  </defs>
+  
+  <!-- Dark space background with subtle stars -->
+  <rect width="800" height="600" fill="#0a0a0f"/>
+  
+  <!-- Ambient background glow -->
+  <circle cx="400" cy="300" r="200" fill="url(#earthGradient)" opacity="0.1" filter="url(#strongGlow)"/>
+  
+  <!-- Floating particles around Earth -->
+  <g opacity="0.7">
+    <circle cx="200" cy="150" r="1.5" fill="#76ff03">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0 400 300;360 400 300" dur="15s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="600" cy="200" r="1" fill="#00ffff">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0 400 300;-360 400 300" dur="18s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="400" r="1.2" fill="#ff6ec7">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0 400 300;360 400 300" dur="22s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="650" cy="450" r="0.8" fill="#ffffff">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0 400 300;-360 400 300" dur="25s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Orbital rings -->
+  <g opacity="0.6">
+    <ellipse cx="400" cy="300" rx="180" ry="60" fill="none" stroke="url(#circuitGradient)" stroke-width="1" transform="rotate(15 400 300)">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="15 400 300;375 400 300" dur="30s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="400" cy="300" rx="200" ry="50" fill="none" stroke="url(#circuitGradient)" stroke-width="0.8" opacity="0.5" transform="rotate(-20 400 300)">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="-20 400 300;340 400 300" dur="35s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+  
+  <!-- Main Earth sphere -->
+  <circle cx="400" cy="300" r="120" fill="url(#earthGradient)" filter="url(#glow)"/>
+  
+  <!-- Geometric continent structures -->
+  <g opacity="0.8">
+    <!-- North America stylized -->
+    <path d="M 350 250 L 380 240 L 390 260 L 370 270 L 350 265 Z" fill="#76ff03" opacity="0.7"/>
+    <path d="M 360 270 L 385 275 L 380 290 L 365 285 Z" fill="#4caf50" opacity="0.6"/>
+    
+    <!-- Europe/Asia stylized -->
+    <path d="M 420 245 L 450 240 L 460 255 L 440 265 L 425 260 Z" fill="#00ffff" opacity="0.7"/>
+    <path d="M 430 265 L 455 270 L 450 285 L 435 280 Z" fill="#26c6da" opacity="0.6"/>
+    
+    <!-- Africa stylized -->
+    <path d="M 410 290 L 430 285 L 435 310 L 415 315 Z" fill="#ff6ec7" opacity="0.7"/>
+    
+    <!-- Circuit lines on continents -->
+    <path d="M 355 255 L 375 250 M 370 265 L 385 270" stroke="#76ff03" stroke-width="1" opacity="0.8"/>
+    <path d="M 425 250 L 445 245 M 440 270 L 450 275" stroke="#00ffff" stroke-width="1" opacity="0.8"/>
+    <path d="M 415 295 L 425 300 M 420 310 L 430 305" stroke="#ff6ec7" stroke-width="1" opacity="0.8"/>
+  </g>
+  
+  <!-- NVIDIA logo at Earth's center (enlarged) -->
+  <g transform="translate(400, 300)">
+    <!-- Main NVIDIA eye/swirl symbol (much larger) -->
+    <path d="M -40 -20 Q -20 -40 0 -20 Q 20 0 0 20 Q -20 40 -40 20 Q -60 0 -40 -20 Z" 
+          fill="url(#nvidiaGreen)" filter="url(#strongGlow)" opacity="1"/>
+    <path d="M 10 -16 Q 30 -30 40 -10 Q 30 10 10 16 Q -10 30 -20 10 Q -10 -10 10 -16 Z" 
+          fill="url(#nvidiaGreen)" filter="url(#strongGlow)" opacity="0.8"/>
+    
+    <!-- Inner glow accent -->
+    <circle cx="0" cy="0" r="15" fill="url(#nvidiaGreen)" opacity="0.3" filter="url(#glow)"/>
+    
+    <!-- NVIDIA text below logo (larger and more prominent) -->
+    <text x="0" y="55" font-family="Arial, sans-serif" font-size="16" font-weight="900" 
+          text-anchor="middle" fill="url(#nvidiaGreen)" filter="url(#glow)" opacity="1">NVIDIA</text>
+  </g>
+  
+  <!-- Hexagonal grid overlay on Earth -->
+  <g opacity="0.3" stroke="url(#circuitGradient)" stroke-width="0.5" fill="none">
+    <polygon points="380,270 390,265 400,270 400,280 390,285 380,280"/>
+    <polygon points="400,270 410,265 420,270 420,280 410,285 400,280"/>
+    <polygon points="390,285 400,280 410,285 410,295 400,300 390,295"/>
+    <polygon points="410,285 420,280 430,285 430,295 420,300 410,295"/>
+  </g>
+  
+  <!-- Data streams/particles -->
+  <g opacity="0.6">
+    <circle cx="300" cy="200" r="2" fill="#76ff03">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; 200,100; 0,0" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="500" cy="400" r="1.5" fill="#00ffff">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; -200,-100; 0,0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- BERTH text with 3D effect -->
+  <g transform="translate(400, 120)">
+    <!-- Text shadow layers for 3D depth -->
+    <text x="2" y="2" font-family="Arial, sans-serif" font-size="48" font-weight="900" 
+          text-anchor="middle" fill="#333333" opacity="0.3">BERTH</text>
+    <text x="1" y="1" font-family="Arial, sans-serif" font-size="48" font-weight="900" 
+          text-anchor="middle" fill="#666666" opacity="0.5">BERTH</text>
+    
+    <!-- Main text -->
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="48" font-weight="900" 
+          text-anchor="middle" fill="url(#mercuryGradient)" filter="url(#textShadow)">BERTH</text>
+  </g>
+  
+  <!-- Additional light rays from Earth -->
+  <g opacity="0.4">
+    <line x1="400" y1="180" x2="400" y2="100" stroke="url(#circuitGradient)" stroke-width="2" filter="url(#glow)"/>
+    <line x1="320" y1="240" x2="250" y2="180" stroke="url(#circuitGradient)" stroke-width="1.5" filter="url(#glow)"/>
+    <line x1="480" y1="240" x2="550" y2="180" stroke="url(#circuitGradient)" stroke-width="1.5" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Subtle binary code background -->
+  <g opacity="0.1" fill="#76ff03" font-family="monospace" font-size="8">
+    <text x="50" y="100">01001001 01000001</text>
+    <text x="600" y="150">01000010 01001100</text>
+    <text x="100" y="500">01000011 01001000</text>
+    <text x="650" y="450">01000001 01001001</text>
+  </g>
+  
+</svg>

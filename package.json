@@ -1,0 +1,86 @@
+{
+  "name": "berth-presale-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@shadcn/ui": "^0.0.4",
+    "@tanstack/query-core": "^5.81.2",
+    "@tanstack/react-query": "^5.81.2",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@web3modal/ethereum": "^2.5.0",
+    "@web3modal/react": "^2.7.1",
+    "@web3modal/wagmi": "^3.0.0",
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
+    "assert": "^2.1.0",
+    "axios": "^1.10.0",
+    "buffer": "^6.0.3",
+    "ethers": "^6.14.3",
+    "framer-motion": "^12.18.1",
+    "https-browserify": "^1.0.0",
+    "i18next": "^25.2.1",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "i18next-http-backend": "^3.0.2",
+    "lucide-react": "^0.518.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-i18next": "^15.5.3",
+    "react-router-dom": "^6.30.1",
+    "react-scripts": "5.0.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.4",
+    "util": "^0.12.5",
+    "viem": "^2.31.4",
+    "wagmi": "^1.4.13",
+    "web-vitals": "^2.1.4"
+  },
+  "browser": {
+    "stream": "stream-browserify",
+    "assert": "assert",
+    "util": "util",
+    "buffer": "buffer",
+    "process": "process/browser",
+    "zlib": "browserify-zlib",
+    "http": "stream-http",
+    "https": "https-browserify",
+    "os": "os-browserify/browser",
+    "url": "url"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwind-scrollbar": "^4.0.2",
+    "tailwindcss": "^3.4.17",
+    "typescript": "4.9.5"
+  }
+}
