@@ -25,7 +25,7 @@ const ProgressTube = ({ amount }) => {
         />
         <div className="absolute inset-0 flex items-center justify-center font-bold font-mono z-20">
           {amount
-            ? `${amount.toLocaleString()} / 470,000,000 BERTH sold`
+            ? `$${amount.toLocaleString()} / $470,000,000  `
             : "Loading..."}
         </div>
       </div>
