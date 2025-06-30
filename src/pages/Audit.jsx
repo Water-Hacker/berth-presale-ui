@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import Logo from "../assets/logo.svg"; // Make sure the path is correct
+
 import Navbar from "../components/Navbar";
 
 const AuditNotice = () => {

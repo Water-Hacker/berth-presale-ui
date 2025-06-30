@@ -33,7 +33,7 @@ const PresaleDashboard = () => {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
-  const navigate = useNavigate();
+  
 
   const addOrSwitchToMainnet = async () => {
     if (!window.ethereum) {
