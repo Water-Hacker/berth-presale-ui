@@ -41,7 +41,7 @@ const PresaleDashboard = () => {
       const res = await axios.get("https://berth-backend.onrender.com/api/presale-amount");
       setAmount(res.data.amount);
     } catch (err) {
-      console.error("Failed to fetch backend presale amount:", err);
+      console.error("Failed to fetch  presale amount:", err);
       setError("Failed to fetch presale amount from server.");
     } finally {
       setLoading(false);
@@ -150,7 +150,7 @@ const PresaleDashboard = () => {
         setAllocatedTokens(formatUnits(allocated, 18));
       } catch (err) {
         console.error("Failed to fetch allocation:", err);
-        setError("Failed to fetch token allocation.");
+        setError(".");
       }
     }
   }, [presaleContract, address]);
