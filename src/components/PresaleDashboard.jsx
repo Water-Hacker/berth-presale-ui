@@ -12,7 +12,6 @@ import ProgressTube from "../components/ProgressTube";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Banner from "../assets/banner-image.svg";
-import { useNavigate } from "react-router-dom";
 
 const PresaleDashboard = () => {
   const [amount, setAmount] = useState(295965061);
@@ -33,7 +32,6 @@ const PresaleDashboard = () => {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
-  
 
   const addOrSwitchToMainnet = async () => {
     if (!window.ethereum) {
@@ -43,7 +41,7 @@ const PresaleDashboard = () => {
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x1" }], // Ethereum Mainnet
+        params: [{ chainId: "0x1" }],
       });
       return true;
     } catch (switchError) {
@@ -78,8 +76,7 @@ const PresaleDashboard = () => {
         const res = await axios.get(
           "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
         );
-        const ethUsd = res.data.ethereum.usd;
-        setEthPriceUSD(ethUsd);
+        setEthPriceUSD(res.data.ethereum.usd);
         setEthToBerthRate(40);
       } catch (err) {
         console.error("Failed to fetch ETH price:", err);
@@ -225,7 +222,8 @@ const PresaleDashboard = () => {
   return (
     <>
       <Navbar />
-      <motion.div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex flex-col items-center px-4 py-6 gap-10"
+      <motion.div
+        className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex flex-col items-center px-4 py-6 gap-10"
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -261,8 +259,10 @@ const PresaleDashboard = () => {
                   Live ETH Price: ${ethPriceUSD}
                 </p>
               )}
-              <button onClick={disconnect}
-                className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md text-sm">
+              <button
+                onClick={disconnect}
+                className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md text-sm"
+              >
                 Disconnect Wallet
               </button>
             </>
