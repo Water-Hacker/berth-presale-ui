@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Logo from "../assets/logo.svg"; // Ensure path is correct
 import Navbar from "../components/Navbar"; // ✅ Import Navbar
+import Footer from "../components/Footer";
 
 const Whitelist = () => {
   return (
@@ -121,6 +122,8 @@ const Whitelist = () => {
             </tbody>
           </table>
         </section>
+        <Footer />
+
       </motion.div>
     </>
   );

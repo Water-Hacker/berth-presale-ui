@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Logo from "../assets/logo.svg"; // Make sure the path is correct
 import Navbar from "../components/Navbar"; // ✅ Import Navbar
+import Footer from "../components/Footer";
 
 const PrivacyPolicy = () => {
   return (
@@ -49,6 +50,8 @@ const PrivacyPolicy = () => {
             will be posted here.
           </p>
         </div>
+        <Footer />
+
       </motion.div>
     </>
   );

@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import Footer from "../components/Footer";
 
 import Navbar from "../components/Navbar";
 
@@ -46,6 +47,8 @@ const AuditNotice = () => {
 
           <p className="text-gray-400 italic mt-6 text-right">— The BERTH Team</p>
         </div>
+        <Footer />
+
       </motion.div>
     </>
   );
