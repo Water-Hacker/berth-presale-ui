@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useAccount, useDisconnect, useWalletClient } from "wagmi";
 import { Web3Button } from "@web3modal/react";
@@ -125,7 +125,7 @@ const PresaleDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const fetchUserBalance = async () => {
+  const fetchUserBalance = useCallback(async () => {
     if (tokenContract && address) {
       try {
         const balance = await tokenContract.balanceOf(address);
@@ -134,9 +134,9 @@ const PresaleDashboard = () => {
         console.error("Failed to fetch balance:", err);
       }
     }
-  };
+  }, [tokenContract, address]);
 
-  const fetchAllocation = async () => {
+  const fetchAllocation = useCallback(async () => {
     if (presaleContract && address) {
       try {
         const allocated = await presaleContract.getAllocation(address);
@@ -145,7 +145,7 @@ const PresaleDashboard = () => {
         console.error("Failed to fetch allocation:", err);
       }
     }
-  };
+  }, [presaleContract, address]);
 
   useEffect(() => {
     if (isConnected) {
@@ -155,7 +155,7 @@ const PresaleDashboard = () => {
       setUserTokenBalance("0");
       setAllocatedTokens("0");
     }
-  }, [isConnected, tokenContract, presaleContract, address]);
+  }, [isConnected, fetchUserBalance, fetchAllocation]);
 
   useEffect(() => {
     if (purchaseAmount && !isNaN(parseFloat(purchaseAmount))) {
