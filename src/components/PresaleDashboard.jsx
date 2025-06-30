@@ -14,7 +14,7 @@ import Navbar from "../components/Navbar";
 import Banner from "../assets/banner-image.svg";
 
 const PresaleDashboard = () => {
-  const [amount, setAmount] = useState(295965061);
+  const [amount, setAmount] = useState(0);
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [estimatedTokens, setEstimatedTokens] = useState("0");
   const [error, setError] = useState("");
@@ -33,11 +33,18 @@ const PresaleDashboard = () => {
   const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
 
-  const addOrSwitchToMainnet = async () => {
-    if (!window.ethereum) {
-      alert("MetaMask is not installed");
-      return false;
+  const fetchBackendPresaleAmount = useCallback(async () => {
+    try {
+      const res = await axios.get("https://berth-backend.onrender.com/api/presale-amount");
+      setAmount(res.data.amount);
+    } catch (err) {
+      console.error("Failed to fetch backend presale amount:", err);
     }
+  }, []);
+
+  const addOrSwitchToMainnet = async () => {
+    if (!window.ethereum) return false;
+
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -61,10 +68,8 @@ const PresaleDashboard = () => {
           });
           return true;
         } catch {
-          alert("Failed to add Ethereum Mainnet to MetaMask");
+          return false;
         }
-      } else {
-        alert("Failed to switch to Ethereum Mainnet");
       }
       return false;
     }
@@ -80,8 +85,6 @@ const PresaleDashboard = () => {
         setEthToBerthRate(40);
       } catch (err) {
         console.error("Failed to fetch ETH price:", err);
-        setEthPriceUSD(null);
-        setEthToBerthRate(40);
       }
     };
     fetchLiveEthPrice();
@@ -111,19 +114,11 @@ const PresaleDashboard = () => {
   useEffect(() => {
     if (signer) {
       const presale = new Contract(berthPresaleAddress, berthPresaleABI, signer);
-      setPresaleContract(presale);
       const token = new Contract(berthAddress, berthABI, signer);
+      setPresaleContract(presale);
       setTokenContract(token);
     }
   }, [signer]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const increment = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
-      setAmount((prev) => Math.min(prev + increment, 470000000));
-    }, 3600000);
-    return () => clearInterval(interval);
-  }, []);
 
   const fetchUserBalance = useCallback(async () => {
     if (tokenContract && address) {
@@ -156,6 +151,10 @@ const PresaleDashboard = () => {
       setAllocatedTokens("0");
     }
   }, [isConnected, fetchUserBalance, fetchAllocation]);
+
+  useEffect(() => {
+    fetchBackendPresaleAmount();
+  }, [fetchBackendPresaleAmount]);
 
   useEffect(() => {
     if (purchaseAmount && !isNaN(parseFloat(purchaseAmount))) {
@@ -209,6 +208,7 @@ const PresaleDashboard = () => {
       setPurchaseAmount("");
       await fetchUserBalance();
       await fetchAllocation();
+      await fetchBackendPresaleAmount();
       setEstimatedTokens("0");
       setIsPurchaseDisabled(false);
     } catch (err) {
@@ -229,7 +229,7 @@ const PresaleDashboard = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <h1 className="text-4xl md:text-5xl font-extrabold text-center drop-shadow-[0_0_15px_#ff0000aa]">
-          BERTH Token Presale Dashboard
+          BERTH Token Presale 
         </h1>
 
         <div className="w-full max-w-5xl">
