@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../assets/logo.svg";
-import LanguageSwitcher from "./LanguageSwitcher";
+// Removed LanguageSwitcher import
 import { useTranslation } from "react-i18next";
 
 const LAUNCH_DATE = new Date("2026-07-06T00:00:00Z");
@@ -42,22 +42,22 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="bg-black bg-opacity-80 shadow-2xl px-4 py-3 md:px-6 md:py-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0 border-b border-red-600 backdrop-blur-md">
+    <header className="bg-black shadow-md px-3 py-2 md:px-4 md:py-3 flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:gap-0 border-b border-red-600 backdrop-blur-md">
       
       {/* Logo & Title */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <img
           src={Logo}
           alt="BERTH Logo"
-          className="h-8 w-8 md:h-10 md:w-auto drop-shadow-[0_0_5px_red]"
+          className="h-6 w-6 md:h-8 md:w-auto drop-shadow-[0_0_5px_red]"
         />
-        <h2 className="text-white font-bold text-lg md:text-xl drop-shadow-[0_0_8px_red]">
+        <h2 className="text-white font-semibold text-base md:text-lg drop-shadow-[0_0_6px_red]">
           BERTH
         </h2>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex flex-wrap justify-center gap-3 md:gap-6 text-white text-xs md:text-sm font-semibold">
+      <nav className="flex flex-wrap justify-center gap-3 md:gap-5 text-white text-xs md:text-sm font-medium">
         <Link to="/" className="hover:text-red-500 transition">{t("Dashboard")}</Link>
         <Link to="/whitelist" className="hover:text-red-500 transition">{t("Tokenomics")}</Link>
         <Link to="/roadmap" className="hover:text-red-500 transition">{t("Roadmap")}</Link>
@@ -65,16 +65,14 @@ const Navbar = () => {
         <Link to="/privacy-policy" className="hover:text-red-500 transition">{t("Privacy")}</Link>
       </nav>
 
-      {/* Info & Language */}
-      <div className="text-right text-[10px] md:text-xs text-gray-400 font-mono leading-tight flex flex-col md:items-end">
+      {/* Info */}
+      <div className="text-right text-[9px] md:text-xs text-gray-400 font-mono leading-tight flex flex-col md:items-end">
         <span className="drop-shadow-sm">{t("Time")}: {currentTime}</span>
         <span className="text-red-500 drop-shadow-sm">{t("Launch In")}: {countdown}</span>
-        <span className="text-yellow-400 drop-shadow-sm max-w-[200px] md:max-w-none">
+        <span className="text-yellow-400 drop-shadow-sm max-w-[180px] md:max-w-none">
           ⚠️ {t("+5% in price weekly. Presale ends once purchase goal is reached.")}
         </span>
-        <div className="mt-1 md:mt-0">
-          <LanguageSwitcher />
-        </div>
+        {/* LanguageSwitcher removed */}
       </div>
     </header>
   );
