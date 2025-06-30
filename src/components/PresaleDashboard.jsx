@@ -18,6 +18,7 @@ const PresaleDashboard = () => {
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [estimatedTokens, setEstimatedTokens] = useState("0");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [presaleContract, setPresaleContract] = useState(null);
   const [tokenContract, setTokenContract] = useState(null);
   const [userTokenBalance, setUserTokenBalance] = useState("0");
@@ -26,19 +27,24 @@ const PresaleDashboard = () => {
   const [ethToBerthRate, setEthToBerthRate] = useState(40);
   const [ethPriceUSD, setEthPriceUSD] = useState(null);
   const [signer, setSigner] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(false);
 
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
 
+  // Fetch presale amount from backend with loading and error handling
   const fetchBackendPresaleAmount = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
       const res = await axios.get("https://berth-backend.onrender.com/api/presale-amount");
       setAmount(res.data.amount);
     } catch (err) {
       console.error("Failed to fetch backend presale amount:", err);
+      setError("Failed to fetch presale amount from server.");
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -101,11 +107,16 @@ const PresaleDashboard = () => {
       }
 
       if (walletClient && window.ethereum) {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const signerInstance = await provider.getSigner();
-        setSigner(signerInstance);
-        const balance = await provider.getBalance(signerInstance.address);
-        setEthBalance(formatUnits(balance, 18));
+        try {
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          const signerInstance = await provider.getSigner();
+          setSigner(signerInstance);
+          const balance = await provider.getBalance(signerInstance.address);
+          setEthBalance(formatUnits(balance, 18));
+        } catch (err) {
+          console.error("Failed to prepare signer and balance:", err);
+          setError("Failed to get wallet signer or balance.");
+        }
       }
     };
     prepare();
@@ -127,6 +138,7 @@ const PresaleDashboard = () => {
         setUserTokenBalance(formatUnits(balance, 18));
       } catch (err) {
         console.error("Failed to fetch balance:", err);
+        setError("Failed to fetch token balance.");
       }
     }
   }, [tokenContract, address]);
@@ -138,6 +150,7 @@ const PresaleDashboard = () => {
         setAllocatedTokens(formatUnits(allocated, 18));
       } catch (err) {
         console.error("Failed to fetch allocation:", err);
+        setError("Failed to fetch token allocation.");
       }
     }
   }, [presaleContract, address]);
@@ -229,12 +242,15 @@ const PresaleDashboard = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <h1 className="text-4xl md:text-5xl font-extrabold text-center drop-shadow-[0_0_15px_#ff0000aa]">
-          BERTH Token Presale 
+          BERTH Token Presale
         </h1>
 
         <div className="w-full max-w-5xl">
           <img src={Banner} alt="BERTH Banner" className="w-full rounded-xl shadow-xl" />
         </div>
+
+        {loading && <p className="text-center text-yellow-300">Loading presale amount...</p>}
+        {error && <p className="text-center text-red-500 font-mono">{error}</p>}
 
         <ProgressTube amount={amount} />
 
@@ -242,22 +258,16 @@ const PresaleDashboard = () => {
           <Web3Button />
           {isConnected && (
             <>
-              <p className="text-green-400 font-mono break-all text-center">
-                Connected: {address}
-              </p>
+              <p className="text-green-400 font-mono break-all text-center">Connected: {address}</p>
               <p className="text-green-400 font-mono text-center">
                 ETH Balance: {parseFloat(ethBalance).toFixed(4)}
               </p>
-              <p className="text-green-400 font-mono text-center">
-                BERTH Token Balance: {userTokenBalance}
-              </p>
+              <p className="text-green-400 font-mono text-center">BERTH Token Balance: {userTokenBalance}</p>
               <p className="text-yellow-400 font-mono text-center">
                 Allocated (Unclaimed): {allocatedTokens} BERTH
               </p>
               {ethPriceUSD && (
-                <p className="text-blue-400 font-mono text-center">
-                  Live ETH Price: ${ethPriceUSD}
-                </p>
+                <p className="text-blue-400 font-mono text-center">Live ETH Price: ${ethPriceUSD}</p>
               )}
               <button
                 onClick={disconnect}
@@ -291,8 +301,6 @@ const PresaleDashboard = () => {
           >
             {loading ? "Processing..." : "Purchase Tokens"}
           </button>
-
-          {error && <p className="text-red-500 mt-2 font-mono text-center">{error}</p>}
         </div>
 
         <Footer />
