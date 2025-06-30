@@ -41,12 +41,22 @@ const PresaleDashboard = () => {
       const res = await axios.get("https://berth-backend.onrender.com/api/presale-amount");
       setAmount(res.data.amount);
     } catch (err) {
-      console.error("Failed to fetch  presale amount:", err);
+      console.error("Failed to fetch presale amount:", err);
       setError("Failed to fetch presale amount from server.");
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // Poll presale amount every 1 minute
+  useEffect(() => {
+    fetchBackendPresaleAmount(); // Initial fetch
+    const interval = setInterval(() => {
+      fetchBackendPresaleAmount();
+    }, 60 * 1000); // every 1 minute
+
+    return () => clearInterval(interval);
+  }, [fetchBackendPresaleAmount]);
 
   const addOrSwitchToMainnet = async () => {
     if (!window.ethereum) return false;
@@ -164,10 +174,6 @@ const PresaleDashboard = () => {
       setAllocatedTokens("0");
     }
   }, [isConnected, fetchUserBalance, fetchAllocation]);
-
-  useEffect(() => {
-    fetchBackendPresaleAmount();
-  }, [fetchBackendPresaleAmount]);
 
   useEffect(() => {
     if (purchaseAmount && !isNaN(parseFloat(purchaseAmount))) {
