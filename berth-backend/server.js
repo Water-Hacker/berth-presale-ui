@@ -10,12 +10,19 @@ app.use(express.json());
 
 let presaleAmount = 261401379; // default value (hidden from frontend)
 
-// Fetch amount (used by frontend)
+// 🔁 Every 5 minutes, add 2100–3000 randomly
+setInterval(() => {
+  const randomIncrement = Math.floor(Math.random() * (3000 - 2100 + 1)) + 2100;
+  presaleAmount += randomIncrement;
+  console.log(`Presale amount increased by ${randomIncrement}. New total: ${presaleAmount}`);
+}, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+// Public endpoint
 app.get("/api/presale-amount", (req, res) => {
   res.json({ amount: presaleAmount });
 });
 
-// Update amount (admin only)
+// Admin endpoint
 app.post("/api/update-amount", (req, res) => {
   const { amount, secret } = req.body;
   if (secret !== process.env.ADMIN_SECRET) {
