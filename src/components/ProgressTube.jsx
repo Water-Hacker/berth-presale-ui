@@ -1,30 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 
-const ProgressTube = () => {
-  const [amount, setAmount] = useState(null);
+const ProgressTube = ({ amount }) => {
+  const progressPercent = amount ? Math.min((amount / 470000000) * 100, 100) : 0;
 
-  useEffect(() => {
-    const fetchAmount = async () => {
-      try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-        const response = await fetch(`${backendUrl}/api/presale-amount`);
-        const data = await response.json();
-        setAmount(data.amount);
-      } catch (error) {
-        console.error("Failed to fetch presale amount", error);
-      }
-    };
-
-    fetchAmount(); // Initial fetch
-    const interval = setInterval(fetchAmount, 60 * 1000); // Refresh every minute
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const progressPercent = amount ? (amount / 470000000) * 100 : 0;
-
-  console.log("Amount:", amount, "Progress %:", progressPercent);
+  console.log("💡 ProgressTube received amount:", amount, "→", progressPercent.toFixed(2), "%");
 
   return (
     <section className="relative py-20 px-4 text-white text-center">
@@ -44,7 +24,9 @@ const ProgressTube = () => {
           className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 to-red-800 rounded-full z-10"
         />
         <div className="absolute inset-0 flex items-center justify-center font-bold font-mono z-20">
-          {amount ? `$${amount.toLocaleString()} / 470,000,000 raised` : "Loading..."}
+          {amount
+            ? `${amount.toLocaleString()} / 470,000,000 BERTH sold`
+            : "Loading..."}
         </div>
       </div>
     </section>
