@@ -4,10 +4,10 @@ import { publicProvider } from "wagmi/providers/public";
 import { w3mProvider, EthereumClient, w3mConnectors } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/react";
 
-// ✅ Web3Modal project ID from Reown/AppKit (was Web3Modal)
+// Your WalletConnect project ID
 const projectId = "cc68db6191b0e53eba0cc185492e5a92";
 
-// ✅ Fully defined Ethereum mainnet chain object (not just imported mainnet)
+// Define Ethereum mainnet chain object
 const mainnet = {
   id: 1,
   name: "Ethereum",
@@ -30,16 +30,20 @@ const mainnet = {
   },
 };
 
-// ✅ Your app metadata (for wallet connection screens)
+// Metadata including redirect URLs for mobile wallet return
 const metadata = {
   name: "BERTH Presale",
-  description:  "BERTH isn’t just a token — it’s the backbone of Blockearth’s digital economy. As the exclusive currency of a rising Web3 nation, its value isn't just in numbers — it's in ownership, access, and power. Early holders won’t just profit — they’ll dominate, the choice is yours.Awaiting our investors in BlockEarth 2.0. Thanks for your Trust",
-
+  description:
+    "BERTH isn’t just a token — it’s the backbone of Blockearth’s digital economy. As the exclusive currency of a rising Web3 nation, its value isn't just in numbers — it's in ownership, access, and power. Early holders won’t just profit — they’ll dominate, the choice is yours. Awaiting our investors in BlockEarth 2.0. Thanks for your Trust",
   url: "https://blockearth.app",
   icons: ["https://blockearth.app/logo.svg"],
+  redirect: {
+    native: "", // leave empty if no native mobile app
+    universal: "https://blockearth.app", // IMPORTANT for mobile wallets to return
+  },
 };
 
-// ✅ Chains and Providers
+// Setup chains and providers
 const chains = [mainnet];
 
 const { publicClient, webSocketPublicClient } = configureChains(
@@ -47,7 +51,7 @@ const { publicClient, webSocketPublicClient } = configureChains(
   [w3mProvider({ projectId }), publicProvider()] // Order matters!
 );
 
-// ✅ Create wagmi config
+// Create Wagmi config with connectors including metadata and returnStrategy
 export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({
@@ -55,20 +59,21 @@ export const wagmiConfig = createConfig({
     version: 2,
     chains,
     metadata,
+    options: {
+      returnStrategy: "redirect", // Helps mobile wallets redirect back to your dApp
+    },
   }),
   publicClient,
   webSocketPublicClient,
 });
 
-// ✅ Ethereum client for Web3Modal
+// Ethereum client for Web3Modal
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
-// ✅ Provider wrapper for app
+// Provider wrapper component for your app
 export const Web3Provider = ({ children }) => (
   <>
-    <WagmiConfig config={wagmiConfig}>
-      {children}
-    </WagmiConfig>
+    <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
     <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
   </>
 );
