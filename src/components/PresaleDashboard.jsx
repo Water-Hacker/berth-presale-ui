@@ -33,126 +33,91 @@ const PresaleDashboard = () => {
   const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
 
-  // Fetch presale amount from backend with loading and error handling
+  // Fetch presale amount from backend
   const fetchBackendPresaleAmount = useCallback(async () => {
-    setLoading(true);
-    setError("");
     try {
       const res = await axios.get("https://berth-backend.onrender.com/api/presale-amount");
       setAmount(res.data.amount);
     } catch (err) {
       console.error("Failed to fetch presale amount:", err);
       setError("Failed to fetch presale amount from server.");
-    } finally {
-      setLoading(false);
     }
   }, []);
 
-  // Poll presale amount every 1 minute
+  // Poll presale amount every 1 min
   useEffect(() => {
-    fetchBackendPresaleAmount(); // Initial fetch
-    const interval = setInterval(() => {
-      fetchBackendPresaleAmount();
-    }, 60 * 1000); // every 1 minute
-
+    fetchBackendPresaleAmount();
+    const interval = setInterval(fetchBackendPresaleAmount, 60000);
     return () => clearInterval(interval);
   }, [fetchBackendPresaleAmount]);
 
-  const addOrSwitchToMainnet = async () => {
-    if (!window.ethereum) return false;
-
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x1" }],
-      });
-      return true;
-    } catch (switchError) {
-      if (switchError.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0x1",
-                chainName: "Ethereum Mainnet",
-                rpcUrls: [process.env.NEXT_PUBLIC_RPC_URL],
-                nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-                blockExplorerUrls: ["https://etherscan.io"],
-              },
-            ],
-          });
-          return true;
-        } catch {
-          return false;
-        }
-      }
-      return false;
-    }
-  };
-
+  // Fetch live ETH price USD every minute
   useEffect(() => {
-    const fetchLiveEthPrice = async () => {
+    const fetchEthPrice = async () => {
       try {
         const res = await axios.get(
           "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
         );
         setEthPriceUSD(res.data.ethereum.usd);
-        setEthToBerthRate(40);
       } catch (err) {
         console.error("Failed to fetch ETH price:", err);
       }
     };
-    fetchLiveEthPrice();
-    const interval = setInterval(fetchLiveEthPrice, 60000);
+    fetchEthPrice();
+    const interval = setInterval(fetchEthPrice, 60000);
     return () => clearInterval(interval);
   }, []);
 
+  // Setup provider, signer, and contracts on walletClient change
   useEffect(() => {
-    const prepare = async () => {
-      const switched = await addOrSwitchToMainnet();
-      if (!switched) {
-        setError("Ethereum Mainnet Only.");
-        return;
-      }
-
-      if (walletClient && window.ethereum) {
+    if (walletClient && window.ethereum) {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const setup = async () => {
         try {
-          const provider = new ethers.BrowserProvider(window.ethereum);
           const signerInstance = await provider.getSigner();
           setSigner(signerInstance);
-          const balance = await provider.getBalance(signerInstance.address);
-          setEthBalance(formatUnits(balance, 18));
+          setPresaleContract(new Contract(berthPresaleAddress, berthPresaleABI, signerInstance));
+          setTokenContract(new Contract(berthAddress, berthABI, signerInstance));
         } catch (err) {
-          console.error("Failed to prepare signer and balance:", err);
-          setError("Failed to get wallet signer or balance.");
+          console.error("Error setting up contracts or signer:", err);
+          setError("Failed to setup blockchain connection.");
         }
-      }
-    };
-    prepare();
+      };
+      setup();
+    } else {
+      setSigner(null);
+      setPresaleContract(null);
+      setTokenContract(null);
+    }
   }, [walletClient]);
 
-  useEffect(() => {
+  // Fetch ETH balance
+  const fetchEthBalance = useCallback(async () => {
     if (signer) {
-      const presale = new Contract(berthPresaleAddress, berthPresaleABI, signer);
-      const token = new Contract(berthAddress, berthABI, signer);
-      setPresaleContract(presale);
-      setTokenContract(token);
+      try {
+        const balance = await signer.getBalance();
+        setEthBalance(formatUnits(balance, 18));
+      } catch (err) {
+        console.error("Failed to fetch ETH balance:", err);
+        setError("Failed to fetch ETH balance.");
+      }
     }
   }, [signer]);
 
-  const fetchUserBalance = useCallback(async () => {
+  // Fetch user token balance
+  const fetchUserTokenBalance = useCallback(async () => {
     if (tokenContract && address) {
       try {
         const balance = await tokenContract.balanceOf(address);
         setUserTokenBalance(formatUnits(balance, 18));
       } catch (err) {
-        console.error("Failed to fetch balance:", err);
+        console.error("Failed to fetch token balance:", err);
         setError("Failed to fetch token balance.");
       }
     }
   }, [tokenContract, address]);
 
+  // Fetch allocation
   const fetchAllocation = useCallback(async () => {
     if (presaleContract && address) {
       try {
@@ -160,21 +125,57 @@ const PresaleDashboard = () => {
         setAllocatedTokens(formatUnits(allocated, 18));
       } catch (err) {
         console.error("Failed to fetch allocation:", err);
-        setError(".");
+        setError("Failed to fetch allocation.");
       }
     }
   }, [presaleContract, address]);
 
+  // Fetch balances and allocation on connect or signer change
   useEffect(() => {
     if (isConnected) {
-      fetchUserBalance();
+      fetchEthBalance();
+      fetchUserTokenBalance();
       fetchAllocation();
     } else {
+      setEthBalance("0");
       setUserTokenBalance("0");
       setAllocatedTokens("0");
     }
-  }, [isConnected, fetchUserBalance, fetchAllocation]);
+  }, [isConnected, fetchEthBalance, fetchUserTokenBalance, fetchAllocation]);
 
+  // Listen to wallet/account changes for automatic refresh (helps mobile)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.ethereum) {
+      const handleAccountsChanged = (accounts) => {
+        if (accounts.length > 0) {
+          fetchEthBalance();
+          fetchUserTokenBalance();
+          fetchAllocation();
+        } else {
+          setEthBalance("0");
+          setUserTokenBalance("0");
+          setAllocatedTokens("0");
+        }
+      };
+      const handleChainChanged = () => {
+        fetchEthBalance();
+        fetchUserTokenBalance();
+        fetchAllocation();
+      };
+
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+      window.ethereum.on("chainChanged", handleChainChanged);
+
+      return () => {
+        if (window.ethereum.removeListener) {
+          window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+          window.ethereum.removeListener("chainChanged", handleChainChanged);
+        }
+      };
+    }
+  }, [fetchEthBalance, fetchUserTokenBalance, fetchAllocation]);
+
+  // Calculate estimated tokens & disable purchase if over limit
   useEffect(() => {
     if (purchaseAmount && !isNaN(parseFloat(purchaseAmount))) {
       const ethAmount = parseFloat(purchaseAmount);
@@ -199,6 +200,7 @@ const PresaleDashboard = () => {
     }
   }, [purchaseAmount, userTokenBalance, allocatedTokens, ethToBerthRate]);
 
+  // Handle purchase
   const handlePurchase = async () => {
     if (!isConnected || !signer || !presaleContract) {
       setError("Please connect your wallet first.");
@@ -225,7 +227,7 @@ const PresaleDashboard = () => {
       alert(`✅ Successfully purchased BERTH tokens with ${ethAmount} ETH`);
       setError("");
       setPurchaseAmount("");
-      await fetchUserBalance();
+      await fetchUserTokenBalance();
       await fetchAllocation();
       await fetchBackendPresaleAmount();
       setEstimatedTokens("0");
@@ -280,6 +282,17 @@ const PresaleDashboard = () => {
                 className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md text-sm"
               >
                 Disconnect Wallet
+              </button>
+
+              <button
+                onClick={() => {
+                  fetchEthBalance();
+                  fetchUserTokenBalance();
+                  fetchAllocation();
+                }}
+                className="mt-2 px-4 py-2 bg-blue-600 rounded-md text-white text-sm hover:bg-blue-700"
+              >
+                Refresh Balances
               </button>
             </>
           )}
