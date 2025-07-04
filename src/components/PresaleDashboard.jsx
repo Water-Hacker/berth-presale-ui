@@ -4,6 +4,7 @@ import { useAccount, useDisconnect, useBalance, useContractRead } from "wagmi";
 import { Web3Button } from "@web3modal/react";
 import { Contract, parseEther, formatUnits, ethers } from "ethers";
 import axios from "axios";
+import { useDebounce } from "use-debounce";
 
 import { berthABI, berthAddress } from "../contracts/BerthTokenABI";
 import berthPresaleABI, { berthPresaleAddress } from "../contracts/BerthPresaleABI";
@@ -16,6 +17,7 @@ import Banner from "../assets/banner-image.svg";
 const PresaleDashboard = () => {
   const [amount, setAmount] = useState(0);
   const [purchaseAmount, setPurchaseAmount] = useState("");
+  const [debouncedPurchaseAmount] = useDebounce(purchaseAmount, 300); // debounce input
   const [estimatedTokens, setEstimatedTokens] = useState("0");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,6 +55,10 @@ const PresaleDashboard = () => {
     enabled: isConnected && !!address,
   });
 
+  // Local states for string balances for UI
+  const [userTokenBalance, setUserTokenBalance] = useState("0");
+  const [ethBalance, setEthBalance] = useState("0");
+
   // Fetch presale amount from backend with loading and error handling
   const fetchBackendPresaleAmount = useCallback(async () => {
     setLoading(true);
@@ -73,11 +79,12 @@ const PresaleDashboard = () => {
     fetchBackendPresaleAmount(); // Initial fetch
     const interval = setInterval(() => {
       fetchBackendPresaleAmount();
-    }, 60 * 1000); // every 1 minute
+    }, 60 * 1000);
 
     return () => clearInterval(interval);
   }, [fetchBackendPresaleAmount]);
 
+  // Switch/Add Mainnet
   const addOrSwitchToMainnet = async () => {
     if (!window.ethereum) return false;
 
@@ -122,7 +129,7 @@ const PresaleDashboard = () => {
     prepare();
   }, []);
 
-  // Setup presale and token contracts with signer
+  // Setup presale contract with signer
   useEffect(() => {
     const setupContracts = async () => {
       if (isConnected && window.ethereum && address) {
@@ -165,7 +172,7 @@ const PresaleDashboard = () => {
     }
   }, [isConnected, fetchAllocation]);
 
-  // Update token balances from Wagmi hook data
+  // Update balances from Wagmi hooks
   useEffect(() => {
     if (userTokenBalanceData) {
       setUserTokenBalance(formatUnits(userTokenBalanceData, 18));
@@ -174,7 +181,6 @@ const PresaleDashboard = () => {
     }
   }, [userTokenBalanceData]);
 
-  // Update ETH balance from Wagmi hook data
   useEffect(() => {
     if (ethBalanceData) {
       setEthBalance(ethBalanceData.formatted);
@@ -183,7 +189,7 @@ const PresaleDashboard = () => {
     }
   }, [ethBalanceData]);
 
-  // Fetch ETH price in USD every minute
+  // Fetch ETH price USD every minute
   useEffect(() => {
     const fetchLiveEthPrice = async () => {
       try {
@@ -203,8 +209,13 @@ const PresaleDashboard = () => {
 
   // Calculate estimated tokens & disable purchase if limit exceeded
   useEffect(() => {
-    if (purchaseAmount && !isNaN(parseFloat(purchaseAmount))) {
-      const ethAmount = parseFloat(purchaseAmount);
+    // Debug logs to check values on mobile & desktop
+    console.log("debouncedPurchaseAmount:", debouncedPurchaseAmount);
+    console.log("userTokenBalance:", userTokenBalance);
+    console.log("allocatedTokens:", allocatedTokens);
+
+    if (debouncedPurchaseAmount && !isNaN(parseFloat(debouncedPurchaseAmount))) {
+      const ethAmount = parseFloat(debouncedPurchaseAmount);
       const tokens = ethAmount * ethToBerthRate;
       const currentHoldings = parseFloat(userTokenBalance || "0");
       const unclaimed = parseFloat(allocatedTokens || "0");
@@ -224,7 +235,7 @@ const PresaleDashboard = () => {
       setIsPurchaseDisabled(false);
       setError("");
     }
-  }, [purchaseAmount, userTokenBalance, allocatedTokens, ethToBerthRate]);
+  }, [debouncedPurchaseAmount, userTokenBalance, allocatedTokens, ethToBerthRate]);
 
   const handlePurchase = async () => {
     if (!isConnected || !presaleContract) {
@@ -263,10 +274,6 @@ const PresaleDashboard = () => {
       setLoading(false);
     }
   };
-
-  // local states to keep string for balances shown on UI
-  const [userTokenBalance, setUserTokenBalance] = useState("0");
-  const [ethBalance, setEthBalance] = useState("0");
 
   return (
     <>
@@ -318,7 +325,7 @@ const PresaleDashboard = () => {
             type="number"
             placeholder="Enter ETH amount"
             value={purchaseAmount}
-            onChange={(e) => setPurchaseAmount(e.target.value)}
+            onChange={(e) => setPurchaseAmount(e.target.value.trim())}
             className="w-full rounded-lg px-4 py-3 bg-gray-800 text-white border border-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
             min="0.0025"
             step="any"
