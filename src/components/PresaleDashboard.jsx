@@ -112,7 +112,7 @@ const PresaleDashboard = () => {
     const prepare = async () => {
       const switched = await addOrSwitchToMainnet();
       if (!switched) {
-        setError("Ethereum Mainnet Only.");
+        setError("Return to Website after connecting.");
         return;
       }
 
