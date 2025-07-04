@@ -39,6 +39,7 @@
     "viem": "^2.31.4",
     "wagmi": "^1.4.13",
     "web-vitals": "^2.1.4"
+    "use-debounce": "^8.0.0"
   },
   "browser": {
     "stream": "stream-browserify",
