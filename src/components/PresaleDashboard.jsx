@@ -33,7 +33,6 @@ const PresaleDashboard = () => {
   const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
 
-  // Fetch presale amount from backend with loading and error handling
   const fetchBackendPresaleAmount = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -48,19 +47,16 @@ const PresaleDashboard = () => {
     }
   }, []);
 
-  // Poll presale amount every 1 minute
   useEffect(() => {
-    fetchBackendPresaleAmount(); // Initial fetch
+    fetchBackendPresaleAmount();
     const interval = setInterval(() => {
       fetchBackendPresaleAmount();
-    }, 60 * 1000); // every 1 minute
-
+    }, 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchBackendPresaleAmount]);
 
   const addOrSwitchToMainnet = async () => {
     if (!window.ethereum) return false;
-
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -243,24 +239,78 @@ const PresaleDashboard = () => {
       <Navbar />
       <motion.div
         className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex flex-col items-center px-4 py-6 gap-10"
-        initial={{ opacity: 0, scale: 0.96 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <h1 className="text-4xl md:text-5xl font-extrabold text-center drop-shadow-[0_0_15px_#ff0000aa]">
           BERTH Token Presale
         </h1>
 
-        <div className="w-full max-w-5xl">
+        {/* Banner */}
+        <motion.div
+          className="w-full max-w-5xl"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
+        >
           <img src={Banner} alt="BERTH Banner" className="w-full rounded-xl shadow-xl" />
-        </div>
+        </motion.div>
 
-        {loading && <p className="text-center text-yellow-300">Loading presale amount...</p>}
-        {error && <p className="text-center text-red-500 font-mono">{error}</p>}
+        {/* Info Block */}
+        <motion.div
+          className="w-full max-w-4xl bg-gray-900 text-white p-6 rounded-2xl shadow-lg space-y-6 text-sm leading-6"
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-red-400">Welcome to Block Earth 2.0</h2>
+          <p>The world’s first hyper-realistic, AI-powered digital twin of our planet.</p>
+          <p className="italic">
+            This isn’t just a token launch — it’s the beginning of a new digital civilization...
+          </p>
 
-        <ProgressTube amount={amount} />
+          <hr className="border-gray-700" />
+          <h3 className="text-xl font-semibold text-red-300">🖥️ Built for Power — Not Phones</h3>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>Land claiming, simulation control, DAO voting require stable PC.</li>
+            <li>Optimized for secure desktop execution.</li>
+            <li>Photorealistic post-launch client — PC, console or VR only.</li>
+          </ul>
 
-        <div className="flex flex-col items-center gap-4 w-full max-w-md bg-gradient-to-br from-gray-900 to-black p-8 rounded-3xl shadow-[0_0_30px_rgba(255,0,0,0.8)]">
+          <hr className="border-gray-700" />
+          <h3 className="text-xl font-semibold text-red-300">📱 What About Mobile?</h3>
+          <p>Yes — mobile is coming after presale for lightweight access:</p>
+          <ul className="list-disc ml-6 space-y-1">
+            <li>Check balances</li>
+            <li>Vote on proposals</li>
+            <li>Travel booking</li>
+            <li>View land stats</li>
+          </ul>
+          <p className="italic">Mobile = dashboard. PC = cockpit.</p>
+
+          <hr className="border-gray-700" />
+          <h3 className="text-xl font-semibold text-red-300">🎯 A Strategic Decision</h3>
+          <p>
+            This isn’t about limiting access — it’s about preserving quality...
+          </p>
+          <p className="font-bold text-green-400">
+            You’re not just buying a token. You’re claiming your place in history.
+          </p>
+          <p className="text-center text-lg text-yellow-300">
+            🌍 Switch to PC to join the BERTH presale.<br />
+            🪙 Be early. Be real. Be ready,See you in BlockEarth 2.0.
+          </p>
+          <p className="text-right text-sm text-gray-500">— The Block Earth Team</p>
+        </motion.div>
+
+        {/* Presale Card */}
+        <motion.div
+          className="flex flex-col items-center gap-4 w-full max-w-md bg-gradient-to-br from-gray-900 to-black p-8 rounded-3xl shadow-[0_0_30px_rgba(255,0,0,0.8)]"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+        >
           <Web3Button />
           {isConnected && (
             <>
@@ -307,7 +357,7 @@ const PresaleDashboard = () => {
           >
             {loading ? "Processing..." : "Purchase Tokens"}
           </button>
-        </div>
+        </motion.div>
 
         <Footer />
       </motion.div>
