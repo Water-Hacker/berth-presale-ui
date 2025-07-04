@@ -24,7 +24,7 @@ const PresaleDashboard = () => {
   const [userTokenBalance, setUserTokenBalance] = useState("0");
   const [allocatedTokens, setAllocatedTokens] = useState("0");
   const [ethBalance, setEthBalance] = useState("0");
-  const [ethToBerthRate] = useState(40); // Removed setEthToBerthRate here
+  const [ethToBerthRate, setEthToBerthRate] = useState(40);
   const [ethPriceUSD, setEthPriceUSD] = useState(null);
   const [signer, setSigner] = useState(null);
   const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(false);
@@ -98,6 +98,7 @@ const PresaleDashboard = () => {
           "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
         );
         setEthPriceUSD(res.data.ethereum.usd);
+        setEthToBerthRate(40);
       } catch (err) {
         console.error("Failed to fetch ETH price:", err);
       }
