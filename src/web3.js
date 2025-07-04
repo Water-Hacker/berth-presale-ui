@@ -33,9 +33,10 @@ const mainnet = {
 // ✅ Your app metadata (for wallet connection screens)
 const metadata = {
   name: "BERTH Presale",
-  description: "Buy BERTH tokens during presale",
-  url: "https://berth.com",
-  icons: ["https://berth.com/logo.png"],
+  description:  "BERTH isn’t just a token — it’s the backbone of Blockearth’s digital economy. As the exclusive currency of a rising Web3 nation, its value isn't just in numbers — it's in ownership, access, and power. Early holders won’t just profit — they’ll dominate, the choice is yours.",
+
+  url: "https://blockearth.app",
+  icons: ["https://blockearth.app/logo.svg"],
 };
 
 // ✅ Chains and Providers
