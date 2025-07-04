@@ -7,7 +7,7 @@ import { Web3Modal } from "@web3modal/react";
 // ✅ Web3Modal project ID from Reown/AppKit (was Web3Modal)
 const projectId = "cc68db6191b0e53eba0cc185492e5a92";
 
-// ✅ Fully defined Ethereum mainnet chain object (not just imported `mainnet`)
+// ✅ Fully defined Ethereum mainnet chain object (not just imported mainnet)
 const mainnet = {
   id: 1,
   name: "Ethereum",
@@ -33,7 +33,7 @@ const mainnet = {
 // ✅ Your app metadata (for wallet connection screens)
 const metadata = {
   name: "BERTH Presale",
-  description:  "BERTH isn’t just a token — it’s the backbone of Blockearth’s digital economy. As the exclusive currency of a rising Web3 nation, its value isn't just in numbers — it's in ownership, access, and power. Early holders won’t just profit — they’ll dominate, the choice is yours.",
+  description:  "BERTH isn’t just a token — it’s the backbone of Blockearth’s digital economy. As the exclusive currency of a rising Web3 nation, its value isn't just in numbers — it's in ownership, access, and power. Early holders won’t just profit — they’ll dominate, the choice is yours.Awaiting our investors in BlockEarth 2.0. Thanks for your Trust",
 
   url: "https://blockearth.app",
   icons: ["https://blockearth.app/logo.svg"],
