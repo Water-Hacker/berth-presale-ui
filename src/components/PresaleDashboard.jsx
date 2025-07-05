@@ -300,7 +300,7 @@ const PresaleDashboard = () => {
 
           <p className="font-bold text-green-400">You’re not just buying a token. You’re claiming your place in history.</p>
 
-          <p className="text-center text-lg text-yellow-300 mt-4">🌍 Switch to PC to join the BERTH presale now.<br />🪙 Be early. Be real. Be ready for the future of Earth — reimagined.</p>
+          <p className="text-center text-lg text-yellow-300 mt-4">🌍 Switch to PC to join the BERTH presale now.<br />🪙 Be early. Be real. Be ready for the future of Earth — reimagined.See you in BlockEarth 2.0</p>
 
           <p className="text-right text-sm text-gray-500 mt-4">— The Block Earth Team</p>
         </div>
