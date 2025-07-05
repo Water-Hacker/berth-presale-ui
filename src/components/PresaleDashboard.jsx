@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { useAccount, useWalletClient } from "wagmi";
-import { Contract, formatUnits, ethers } from "ethers";
+import { useAccount, useDisconnect, useWalletClient } from "wagmi";
+import { Web3Button } from "@web3modal/react";
+import { Contract, parseEther, formatUnits, ethers } from "ethers";
 import axios from "axios";
 
 import { berthABI, berthAddress } from "../contracts/BerthTokenABI";
@@ -14,6 +16,8 @@ import Banner from "../assets/banner-image.svg";
 
 const PresaleDashboard = () => {
   const [amount, setAmount] = useState(0);
+  const [purchaseAmount, setPurchaseAmount] = useState("");
+  const [estimatedTokens, setEstimatedTokens] = useState("0");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [presaleContract, setPresaleContract] = useState(null);
@@ -21,10 +25,14 @@ const PresaleDashboard = () => {
   const [userTokenBalance, setUserTokenBalance] = useState("0");
   const [allocatedTokens, setAllocatedTokens] = useState("0");
   const [ethBalance, setEthBalance] = useState("0");
+  const [ethToBerthRate, setEthToBerthRate] = useState(40);
+  const [ethPriceUSD, setEthPriceUSD] = useState(null);
   const [signer, setSigner] = useState(null);
+  const [isPurchaseDisabled, setIsPurchaseDisabled] = useState(false);
 
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const { disconnect } = useDisconnect();
 
   const fetchBackendPresaleAmount = useCallback(async () => {
     setLoading(true);
@@ -79,6 +87,23 @@ const PresaleDashboard = () => {
       return false;
     }
   };
+
+  useEffect(() => {
+    const fetchLiveEthPrice = async () => {
+      try {
+        const res = await axios.get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+        );
+        setEthPriceUSD(res.data.ethereum.usd);
+        setEthToBerthRate(40);
+      } catch (err) {
+        console.error("Failed to fetch ETH price:", err);
+      }
+    };
+    fetchLiveEthPrice();
+    const interval = setInterval(fetchLiveEthPrice, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const prepare = async () => {
@@ -149,12 +174,7 @@ const PresaleDashboard = () => {
   return (
     <>
       <Navbar />
-      <motion.div
-        className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex flex-col items-center px-4 py-6 gap-10"
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
+      <motion.div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex flex-col items-center px-4 py-6 gap-10" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: "easeOut" }}>
         <h1 className="text-4xl md:text-5xl font-extrabold text-center drop-shadow-[0_0_15px_#ff0000aa]">
           BERTH Token Presale
         </h1>
@@ -168,23 +188,18 @@ const PresaleDashboard = () => {
 
         <ProgressTube amount={amount} />
 
-        {/* Block Earth 2.0 Announcement */}
         <div className="prose prose-invert max-w-3xl text-sm bg-gray-900/80 rounded-2xl p-6 text-white shadow-md">
           <h2 className="text-xl font-bold text-red-400">Welcome to Block Earth 2.0</h2>
           <p>The world’s first hyper-realistic, AI-powered digital twin of our planet.</p>
           <p>This isn’t just a token launch — it’s the beginning of a new digital civilization. And to ensure the integrity, security, and performance of this foundational phase, the BERTH presale is exclusively available on PC.</p>
-
           <hr className="border-gray-700 my-4" />
-
           <h3 className="text-lg font-semibold text-red-300">🖥️ Built for Power — Not Phones</h3>
           <ul className="list-disc pl-6">
             <li>Early access tools — like land claiming, simulation control, and DAO voting — require powerful, stable PC environments</li>
             <li>Our smart contracts and presale dashboard are optimized for secure desktop execution</li>
             <li>The full Block Earth client (post-launch) is a photorealistic experience best suited for PC, console, or VR</li>
           </ul>
-
           <hr className="border-gray-700 my-4" />
-
           <h3 className="text-lg font-semibold text-red-300">📱 What About Mobile?</h3>
           <p>Yes — we will support mobile. But only after the presale, and only for lightweight activities, such as:</p>
           <ul className="list-disc pl-6">
@@ -194,16 +209,11 @@ const PresaleDashboard = () => {
             <li>Viewing land stats and events</li>
           </ul>
           <p className="italic">Mobile will be your dashboard — not your cockpit. The full-scale Block Earth experience will always require a PC or immersive device.</p>
-
           <hr className="border-gray-700 my-4" />
-
           <h3 className="text-lg font-semibold text-red-300">🎯 A Strategic Decision for a Real Future</h3>
           <p>This isn’t about limiting access — it’s about preserving quality. We’re building a real economy, a real society, and a real digital world — not a hype-driven quick flip. Limiting the presale to desktop ensures that early participants are builders, pioneers, and stakeholders in something long-term.</p>
-
           <p className="font-bold text-green-400">You’re not just buying a token. You’re claiming your place in history.</p>
-
           <p className="text-center text-lg text-yellow-300 mt-4">🌍 Switch to PC to join the BERTH presale now.<br />🪙 Be early. Be real. Be ready for the future of Earth — reimagined.</p>
-
           <p className="text-right text-sm text-gray-500 mt-4">See You in BlockEarth 2.0<br />— The Block Earth Team</p>
         </div>
 
