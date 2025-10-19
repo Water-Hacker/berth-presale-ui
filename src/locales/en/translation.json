@@ -1,0 +1,15 @@
+{
+    "navbar": {
+      "dashboard": "Dashboard",
+      "roadmap": "Roadmap",
+      "privacy": "Privacy Policy"
+    },
+    "tokenomics": {
+      "title": "BERTH Tokenomics Overview",
+      "supply": "Total Supply"
+    },
+    "footer": {
+      "rights": "All rights reserved."
+    }
+  }
+  
