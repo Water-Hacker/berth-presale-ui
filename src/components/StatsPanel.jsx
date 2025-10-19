@@ -12,9 +12,9 @@ const StatsPanel = ({ currentAmount, targetAmount = 447000000 }) => {
     const rate = Math.floor(Math.random() * 10000) + 20000;
     setGrowthRate(rate);
 
-    // Countdown timer: 8 months from now (approx)
-    const EIGHT_MONTHS_MS = Math.round(8 * 30.4375 * 24 * 60 * 60 * 1000);
-    const deadline = Date.now() + EIGHT_MONTHS_MS;
+    // Countdown timer: 3 months from now (approx)
+    const THREE_MONTHS_MS = Math.round(3 * 30.4375 * 24 * 60 * 60 * 1000);
+    const deadline = Date.now() + THREE_MONTHS_MS;
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const diff = deadline - now;

@@ -4,8 +4,8 @@ import Logo from "../assets/logo.svg";
 // Removed LanguageSwitcher import
 import { useTranslation } from "react-i18next";
 
-// Dynamic countdown: 8 months from now
-const EIGHT_MONTHS_MS = Math.round(8 * 30.4375 * 24 * 60 * 60 * 1000); // approx. 8 months
+// Dynamic countdown: 3 months from now
+const THREE_MONTHS_MS = Math.round(3 * 30.4375 * 24 * 60 * 60 * 1000); // approx. 3 months
 
 const Navbar = () => {
   const [currentTime, setCurrentTime] = useState("");
@@ -14,7 +14,7 @@ const Navbar = () => {
 
   useEffect(() => {
     // compute target once on mount
-    const target = new Date(Date.now() + EIGHT_MONTHS_MS);
+    const target = new Date(Date.now() + THREE_MONTHS_MS);
 
     const updateTime = () => {
       const now = new Date();
